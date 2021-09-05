@@ -1,21 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
   const [tasks, setTasks] = useState({})
-
-  useEffect(() => {
-    let savedTasks = window.localStorage.getItem("tasks");
-    console.log(savedTasks);
-    if(savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log(JSON.stringify(tasks));
-    window.localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -45,6 +32,14 @@ function App() {
    setTasks(taskList);
   }
 
+  const submitButtonDisabled = () => {
+    if (title.trim() === "" || description.trim() === "") {
+      return true;
+    }
+    
+    return false;
+  }
+
   return (
     <div className="main-container">
       <h1>TODO</h1>
@@ -53,12 +48,12 @@ function App() {
         <h2>Add Task</h2>
 
         <label>Title</label>
-        <input type="text" placeholder="Enter title..." value={title} onChange={(event) => { setTitle(event.target.value) }} />
+        <input type="text" data-testid="title-input" placeholder="Enter title..." value={title} onChange={(event) => { setTitle(event.target.value) }} />
 
         <label>Description</label>
-        <input type="text" placeholder="Enter description..." value={description} onChange={(event) => { setDescription(event.target.value) }} />
+        <input type="text" data-testid="description-input" placeholder="Enter description..." value={description} onChange={(event) => { setDescription(event.target.value) }} />
 
-        <input type="submit" value="Add task" />
+        <button type="submit" data-testid="add-note-button" disabled={submitButtonDisabled()} value="Add task" >Add task</button>
       </form>
 
       <div className="notes-container">
@@ -85,7 +80,7 @@ function Todo({ id, title, desc, onDeleteClick }) {
       <div className="note-title">
         {title}
         <div>
-          <button className="delete-button" onClick={() => onDeleteClick(id)}>
+          <button data-testid={"delete-button-" + id} className="delete-button" onClick={() => onDeleteClick(id)}>
             Delete
           </button>
         </div>
